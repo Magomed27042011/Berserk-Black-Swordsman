@@ -1,0 +1,6 @@
+import secrets
+import string
+
+simvoli = string.ascii_letters + string.digits  
+result = ''.join(secrets.choice(simvoli) for _ in range(14))
+print(result)
