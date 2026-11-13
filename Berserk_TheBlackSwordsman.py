@@ -1,4 +1,5 @@
-import pygame
+import pygame #first commit 
+#first
 
 clock = pygame.time.Clock()
 
@@ -8,39 +9,39 @@ pygame.mixer.init()
 screen = pygame.display.set_mode((1100, 705))
 pygame.display.set_caption("Berserk — The Black Swordsman")
 bg_anim = [
-    pygame.image.load('icons/Berserk icons/bg_img.png').convert_alpha(),
-    pygame.transform.scale(pygame.image.load('icons/Berserk icons/bg_img2.png').convert_alpha(),(1100,705)),
-    pygame.transform.scale(pygame.image.load('icons/Berserk icons/bg_img3.png').convert_alpha(),(1100,705)),
-    pygame.transform.scale(pygame.image.load('icons/Berserk icons/bg_img4.png').convert_alpha(),(1100,705)),
-    pygame.transform.scale(pygame.image.load('icons/Berserk icons/bg_img5.png').convert_alpha(),(1100,705))
+    pygame.image.load('Berserk icons/bg_img.png').convert_alpha(),
+    pygame.transform.scale(pygame.image.load('Berserk icons/bg_img2.png').convert_alpha(),(1100,705)),
+    pygame.transform.scale(pygame.image.load('Berserk icons/bg_img3.png').convert_alpha(),(1100,705)),
+    pygame.transform.scale(pygame.image.load('Berserk icons/bg_img4.png').convert_alpha(),(1100,705)),
+    pygame.transform.scale(pygame.image.load('Berserk icons/bg_img5.png').convert_alpha(),(1100,705))
 ]
 bg_animation_delay = 900
 bg_anim_count = 0
-start_bg = pygame.image.load('icons/Berserk icons/start_bg.png').convert_alpha()
-pygame.display.set_icon(pygame.image.load("icons/Berserk icons/icon.jpg"))
+start_bg = pygame.image.load('Berserk icons/start_bg.png').convert_alpha()
+pygame.display.set_icon(pygame.image.load("Berserk icons/icon.jpg"))
 gats_anim = [
-    pygame.transform.scale(pygame.image.load('icons/Berserk icons/berserk_img1.png').convert_alpha(),(179, 164)),
-    pygame.transform.scale(pygame.image.load('icons/Berserk icons/berserk_img2.png').convert_alpha(),(179, 164)),
-    pygame.transform.scale(pygame.image.load('icons/Berserk icons/berserk_img3.png').convert_alpha(),(179, 164)),
-    pygame.transform.scale(pygame.image.load('icons/Berserk icons/berserk_img4.png').convert_alpha(),(179, 164)),
-    pygame.transform.scale(pygame.image.load('icons/Berserk icons/berserk_img5.png').convert_alpha(),(179, 164))
+    pygame.transform.scale(pygame.image.load('Berserk icons/berserk_img1.png').convert_alpha(),(179, 164)),
+    pygame.transform.scale(pygame.image.load('Berserk icons/berserk_img2.png').convert_alpha(),(179, 164)),
+    pygame.transform.scale(pygame.image.load('Berserk icons/berserk_img3.png').convert_alpha(),(179, 164)),
+    pygame.transform.scale(pygame.image.load('Berserk icons/berserk_img4.png').convert_alpha(),(179, 164)),
+    pygame.transform.scale(pygame.image.load('Berserk icons/berserk_img5.png').convert_alpha(),(179, 164))
 ]
 guts_anim_right = [
-    pygame.transform.scale(pygame.image.load('icons/Berserk icons/berserk_img6.png').convert_alpha(),(179, 164)),
+    pygame.transform.scale(pygame.image.load('Berserk icons/berserk_img6.png').convert_alpha(),(179, 164)),
     #pygame.transform.scale(pygame.image.load('icons/Berserk icons/berserk_img7.png').convert_alpha(),(179, 164)),
-    pygame.transform.scale(pygame.image.load('icons/Berserk icons/berserk_img8.png').convert_alpha(),(179, 164))
+    pygame.transform.scale(pygame.image.load('Berserk icons/berserk_img8.png').convert_alpha(),(179, 164))
 ]
 apostol_anim = [
-    pygame.transform.scale(pygame.image.load('icons/Berserk icons/appostol1.png').convert_alpha(),(179, 164)),
-    pygame.transform.scale(pygame.image.load('icons/Berserk icons/appostol2.png').convert_alpha(),(179, 164)),
-    pygame.transform.scale(pygame.image.load('icons/Berserk icons/appostol3.png').convert_alpha(),(179, 164))
+    pygame.transform.scale(pygame.image.load('Berserk icons/appostol1.png').convert_alpha(),(179, 164)),
+    pygame.transform.scale(pygame.image.load('Berserk icons/appostol2.png').convert_alpha(),(179, 164)),
+    pygame.transform.scale(pygame.image.load('Berserk icons/appostol3.png').convert_alpha(),(179, 164))
 ]
 appostol_anim_count = 0
-appostol_x = 0
-appostol_y = 435
+appostol_x = 1000
+appostol_y = 450
 appostol_timer = pygame.USEREVENT + 1
-appostol_speed = 5
-pygame.time.set_timer(appostol_timer, 1000)
+appostol_speed = 2
+pygame.time.set_timer(appostol_timer, 2200)
 all_appostols_in_game = []
 player_anim_count = 1
 player_anim_count2 = 0
@@ -76,7 +77,7 @@ while runing:
         if event.type == pygame.QUIT:
             runing = False 
         if event.type == appostol_timer and gameplay == 'game':
-           all_appostols_in_game.append([800, 435])
+           all_appostols_in_game.append([appostol_x, appostol_y])
         if event.type == pygame.MOUSEBUTTONDOWN and event.button==1:
             if start_label_rect.collidepoint(event.pos):
                 gameplay = "game"
@@ -123,12 +124,16 @@ while runing:
      else:
         current_sprite = gats_anim[player_anim_count]
      screen.blit(current_sprite,(guts_x,guts_y))
-     for apostol in all_appostols_in_game:
-        apostol[0] -= appostol_speed
+     for appostol in all_appostols_in_game:
+        appostol[0] -= appostol_speed
         screen.blit(
            apostol_anim[appostol_anim_count],
-           (apostol[0],apostol[1])
+           (appostol[0],appostol[1])
             )
+        all_appostols_in_game = [
+           appostol for appostol in all_appostols_in_game
+           if appostol[0] > -179
+        ]
      
      if (keys[pygame.K_RIGHT ] or keys[pygame.K_d]) and guts_x < 750:
         guts_x+=player_speed
