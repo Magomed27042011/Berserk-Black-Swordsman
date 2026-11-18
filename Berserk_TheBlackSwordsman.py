@@ -1,9 +1,8 @@
 import pygame #first commit 
 #first
 
-clock = pygame.time.Clock()
-
 pygame.init()
+clock = pygame.time.Clock()
 pygame.mixer.init()
 
 screen = pygame.display.set_mode((1100, 705))
@@ -15,6 +14,7 @@ bg_anim = [
     pygame.transform.scale(pygame.image.load('Berserk icons/bg_img4.png').convert_alpha(),(1100,705)),
     pygame.transform.scale(pygame.image.load('Berserk icons/bg_img5.png').convert_alpha(),(1100,705))
 ]
+bg = pygame.image.load('Berserk icons/bg_img.png').convert_alpha()
 bg_animation_delay = 900
 bg_anim_count = 0
 start_bg = pygame.image.load('Berserk icons/start_bg.png').convert_alpha()
@@ -56,6 +56,7 @@ appostol_last_update = pygame.time.get_ticks()
 overlay = pygame.Surface((1100,705))
 overlay.set_alpha(65)
 overlay.fill((18, 12, 30))
+player_rect = guts_anim_right[0].get_rect(topleft=(guts_x, guts_y))
 
 label = pygame.font.Font('fonts/Cinzel-Bold.ttf', 48)
 start_label = label.render("PLAY" ,False, (150, 35, 45))
@@ -77,7 +78,10 @@ while runing:
         if event.type == pygame.QUIT:
             runing = False 
         if event.type == appostol_timer and gameplay == 'game':
-           all_appostols_in_game.append([appostol_x, appostol_y])
+           all_appostols_in_game.append({
+                    "rect": apostol_anim[0].get_rect(topleft=(926, appostol_y)),
+                    'anim_count': 0.0
+           })
         if event.type == pygame.MOUSEBUTTONDOWN and event.button==1:
             if start_label_rect.collidepoint(event.pos):
                 gameplay = "game"
@@ -94,7 +98,8 @@ while runing:
         screen.blit(start_label,start_label_rect)
         screen.blit(close_label,close_label_rect)
     elif gameplay == "game":
-
+     #screen.blit(bg,(0,0))
+     player_rect.topleft = (guts_x, guts_y)
      current_time = pygame.time.get_ticks()
      if current_time - bg_last_update >= bg_animation_delay:
         bg_anim_count += 1
@@ -125,15 +130,15 @@ while runing:
         current_sprite = gats_anim[player_anim_count]
      screen.blit(current_sprite,(guts_x,guts_y))
      for appostol in all_appostols_in_game:
-        appostol[0] -= appostol_speed
-        screen.blit(
-           apostol_anim[appostol_anim_count],
-           (appostol[0],appostol[1])
-            )
-        all_appostols_in_game = [
-           appostol for appostol in all_appostols_in_game
-           if appostol[0] > -179
-        ]
+         appostol["rect"].x -= appostol_speed
+         screen.blit(
+            apostol_anim[appostol_anim_count],
+            appostol["rect"].topleft
+             )
+     all_appostols_in_game = [
+            appostol for appostol in all_appostols_in_game
+            if appostol["rect"].x > -179
+         ]
      
      if (keys[pygame.K_RIGHT ] or keys[pygame.K_d]) and guts_x < 750:
         guts_x+=player_speed
@@ -149,6 +154,10 @@ while runing:
             if player_anim_count2>=len(guts_anim_right):
              player_anim_count2 = 0
             last_update2 = current_time
+     player_rect.topleft = (guts_x, guts_y)
+     for apostol in all_appostols_in_game:
+      if player_rect.colliderect(appostol['rect']):
+        print("game over")
     pygame.display.update()
     clock.tick(90)
 pygame.quit()
