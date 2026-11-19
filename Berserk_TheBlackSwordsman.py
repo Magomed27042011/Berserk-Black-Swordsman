@@ -18,6 +18,7 @@ bg = pygame.image.load('Berserk icons/bg_img.png').convert_alpha()
 bg_animation_delay = 900
 bg_anim_count = 0
 start_bg = pygame.image.load('Berserk icons/start_bg.png').convert_alpha()
+lose_bg = pygame.image.load('Berserk icons/start_bg.png').convert_alpha()
 pygame.display.set_icon(pygame.image.load("Berserk icons/icon.jpg"))
 gats_anim = [
     pygame.transform.scale(pygame.image.load('Berserk icons/berserk_img1.png').convert_alpha(),(179, 164)),
@@ -63,6 +64,8 @@ start_label = label.render("PLAY" ,False, (150, 35, 45))
 start_label_rect = start_label.get_rect(center=(550,330))
 close_label = label.render("CLOSE" ,False, (150, 35, 45))
 close_label_rect = start_label.get_rect(center=(527,390))
+restart_label = label.render("RESTART" ,False, (150, 35, 45))
+restart_label_rect = start_label.get_rect(center=(505,330))
 
 Guts = 'sounds/Berserk1.mp3'
 pygame.mixer.music.load(Guts)
@@ -84,6 +87,12 @@ while runing:
            })
         if event.type == pygame.MOUSEBUTTONDOWN and event.button==1:
             if start_label_rect.collidepoint(event.pos):
+                gameplay = "game"
+                pygame.mixer.music.stop()
+                pygame.mixer.music.load(Murder)
+                pygame.mixer.music.set_volume(0.35)
+                pygame.mixer.music.play(-1)
+            elif restart_label_rect.collidepoint(event.pos):
                 gameplay = "game"
                 pygame.mixer.music.stop()
                 pygame.mixer.music.load(Murder)
@@ -155,9 +164,22 @@ while runing:
              player_anim_count2 = 0
             last_update2 = current_time
      player_rect.topleft = (guts_x, guts_y)
+     
      for apostol in all_appostols_in_game:
-      if player_rect.colliderect(appostol['rect']):
-        print("game over")
+      if player_rect.colliderect(apostol["rect"]):
+        print("СТОЛКНОВЕНИЕ!")
+        gameplay = "game over"
+        pygame.mixer.music.stop()
+        break
+    elif gameplay == "game over":
+       screen.blit(lose_bg,(0,0))
+       screen.blit(overlay,(0,0))
+       screen.blit(restart_label,restart_label_rect)
+       screen.blit(close_label,close_label_rect)
+       guts_x = 230
+       guts_y = 435
+       all_appostols_in_game.clear()
+       player_rect.topleft = (guts_x,guts_y)
     pygame.display.update()
     clock.tick(90)
 pygame.quit()
