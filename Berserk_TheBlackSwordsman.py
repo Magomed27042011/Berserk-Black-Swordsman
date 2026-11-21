@@ -1,5 +1,4 @@
-import pygame #first commit 
-#first
+import pygame 
 
 pygame.init()
 clock = pygame.time.Clock()
@@ -49,6 +48,8 @@ player_anim_count2 = 0
 player_speed = 1
 guts_x = 230
 guts_y = 435
+is_jump = False
+jump_count = -12
 animation_dielay = 180
 bg_last_update = pygame.time.get_ticks()
 last_update = pygame.time.get_ticks()
@@ -88,6 +89,10 @@ while runing:
         if event.type == pygame.MOUSEBUTTONDOWN and event.button==1:
             if start_label_rect.collidepoint(event.pos):
                 gameplay = "game"
+                guts_x = 230
+                guts_y = 435
+                is_jump = False
+                jump_count = 12
                 pygame.mixer.music.stop()
                 pygame.mixer.music.load(Murder)
                 pygame.mixer.music.set_volume(0.35)
@@ -163,11 +168,22 @@ while runing:
             if player_anim_count2>=len(guts_anim_right):
              player_anim_count2 = 0
             last_update2 = current_time
+     if not is_jump:
+        if keys[pygame.K_SPACE]:
+           is_jump = True
+     else:
+        if jump_count>=-12:
+           if jump_count>0:
+              guts_y-=(jump_count**2)/2
+           else:
+              guts_y+=(jump_count**2)/2
+           jump_count-=1
+        else:
+           is_jump = False
+           jump_count = 12
      player_rect.topleft = (guts_x, guts_y)
-     
      for apostol in all_appostols_in_game:
       if player_rect.colliderect(apostol["rect"]):
-        print("СТОЛКНОВЕНИЕ!")
         gameplay = "game over"
         pygame.mixer.music.stop()
         break
