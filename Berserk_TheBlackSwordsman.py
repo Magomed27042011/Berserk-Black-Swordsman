@@ -36,6 +36,7 @@ apostol_anim = [
     pygame.transform.scale(pygame.image.load('Berserk icons/appostol2.png').convert_alpha(),(179, 164)),
     pygame.transform.scale(pygame.image.load('Berserk icons/appostol3.png').convert_alpha(),(179, 164))
 ]
+jump_img = pygame.transform.scale(pygame.image.load('Berserk icons/guts_jump.png').convert_alpha(),(179, 164))
 appostol_anim_count = 0
 appostol_x = 1000
 appostol_y = 450
@@ -49,7 +50,7 @@ player_speed = 1
 guts_x = 230
 guts_y = 435
 is_jump = False
-jump_count = -12
+jump_count = 12
 animation_dielay = 180
 bg_last_update = pygame.time.get_ticks()
 last_update = pygame.time.get_ticks()
@@ -66,7 +67,7 @@ start_label_rect = start_label.get_rect(center=(550,330))
 close_label = label.render("CLOSE" ,False, (150, 35, 45))
 close_label_rect = start_label.get_rect(center=(527,390))
 restart_label = label.render("RESTART" ,False, (150, 35, 45))
-restart_label_rect = start_label.get_rect(center=(505,330))
+restart_label_rect = restart_label.get_rect(center=(505,330))
 
 Guts = 'sounds/Berserk1.mp3'
 pygame.mixer.music.load(Guts)
@@ -87,7 +88,7 @@ while runing:
                     'anim_count': 0.0
            })
         if event.type == pygame.MOUSEBUTTONDOWN and event.button==1:
-            if start_label_rect.collidepoint(event.pos):
+            if gameplay == "start_mode" and start_label_rect.collidepoint(event.pos):
                 gameplay = "game"
                 guts_x = 230
                 guts_y = 435
@@ -97,12 +98,18 @@ while runing:
                 pygame.mixer.music.load(Murder)
                 pygame.mixer.music.set_volume(0.35)
                 pygame.mixer.music.play(-1)
-            elif restart_label_rect.collidepoint(event.pos):
+            elif gameplay == "game over" and restart_label_rect.collidepoint(event.pos):
                 gameplay = "game"
                 pygame.mixer.music.stop()
                 pygame.mixer.music.load(Murder)
                 pygame.mixer.music.set_volume(0.35)
                 pygame.mixer.music.play(-1)
+                guts_x = 230
+                guts_y = 435
+                all_appostols_in_game.clear()
+                player_rect.topleft = (guts_x,guts_y)
+                is_jump = False
+                jump_count = 12
             elif close_label_rect.collidepoint(event.pos):
                 runing=False
 
@@ -142,7 +149,6 @@ while runing:
       current_sprite = guts_anim_right[player_anim_count2]
      else:
         current_sprite = gats_anim[player_anim_count]
-     screen.blit(current_sprite,(guts_x,guts_y))
      for appostol in all_appostols_in_game:
          appostol["rect"].x -= appostol_speed
          screen.blit(
@@ -169,18 +175,23 @@ while runing:
              player_anim_count2 = 0
             last_update2 = current_time
      if not is_jump:
-        if keys[pygame.K_SPACE]:
-           is_jump = True
+         if keys[pygame.K_SPACE]:
+             is_jump = True
      else:
-        if jump_count>=-12:
-           if jump_count>0:
-              guts_y-=(jump_count**2)/2
-           else:
-              guts_y+=(jump_count**2)/2
-           jump_count-=1
-        else:
-           is_jump = False
-           jump_count = 12
+         if jump_count >= -12:
+             if jump_count > 0:
+                 guts_y -= (jump_count**2) / 2
+             else:
+                 guts_y += (jump_count**2) / 2
+
+             jump_count -= 1
+         else:
+             is_jump = False
+             jump_count = 12
+     if is_jump:
+        screen.blit(jump_img,(guts_x,guts_y))
+     else:
+      screen.blit(current_sprite, (guts_x, guts_y))
      player_rect.topleft = (guts_x, guts_y)
      for apostol in all_appostols_in_game:
       if player_rect.colliderect(apostol["rect"]):
@@ -192,10 +203,6 @@ while runing:
        screen.blit(overlay,(0,0))
        screen.blit(restart_label,restart_label_rect)
        screen.blit(close_label,close_label_rect)
-       guts_x = 230
-       guts_y = 435
-       all_appostols_in_game.clear()
-       player_rect.topleft = (guts_x,guts_y)
     pygame.display.update()
     clock.tick(90)
 pygame.quit()
