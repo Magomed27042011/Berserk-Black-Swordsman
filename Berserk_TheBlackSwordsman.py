@@ -51,6 +51,9 @@ guts_x = 230
 guts_y = 435
 is_jump = False
 jump_count = 12
+jump_velocity = 0
+gravity = 0.45 
+jump_strengh = -13
 animation_dielay = 180
 bg_last_update = pygame.time.get_ticks()
 last_update = pygame.time.get_ticks()
@@ -93,7 +96,7 @@ while runing:
                 guts_x = 230
                 guts_y = 435
                 is_jump = False
-                jump_count = 12
+                jump_velocity = 0
                 pygame.mixer.music.stop()
                 pygame.mixer.music.load(Murder)
                 pygame.mixer.music.set_volume(0.35)
@@ -109,7 +112,7 @@ while runing:
                 all_appostols_in_game.clear()
                 player_rect.topleft = (guts_x,guts_y)
                 is_jump = False
-                jump_count = 12
+                jump_velocity = 0
             elif close_label_rect.collidepoint(event.pos):
                 runing=False
 
@@ -177,17 +180,15 @@ while runing:
      if not is_jump:
          if keys[pygame.K_SPACE]:
              is_jump = True
+             jump_velocity = jump_strengh
      else:
-         if jump_count >= -12:
-             if jump_count > 0:
-                 guts_y -= (jump_count**2) / 2
-             else:
-                 guts_y += (jump_count**2) / 2
+       guts_y += jump_velocity
+       jump_velocity += gravity
 
-             jump_count -= 1
-         else:
-             is_jump = False
-             jump_count = 12
+       if guts_y >= 435:
+          guts_y = 435
+          is_jump = False
+          jump_velocity = 0
      if is_jump:
         screen.blit(jump_img,(guts_x,guts_y))
      else:
