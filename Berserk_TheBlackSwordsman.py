@@ -54,6 +54,10 @@ jump_count = 12
 jump_velocity = 0
 gravity = 0.45 
 jump_strengh = -13
+is_atak = False
+atak_img = pygame.transform.scale(pygame.image.load('Berserk icons/guts_atak.png').convert_alpha(),(179, 164))
+atak_duration = 250
+atak_start = 0
 animation_dielay = 180
 bg_last_update = pygame.time.get_ticks()
 last_update = pygame.time.get_ticks()
@@ -62,7 +66,8 @@ appostol_last_update = pygame.time.get_ticks()
 overlay = pygame.Surface((1100,705))
 overlay.set_alpha(65)
 overlay.fill((18, 12, 30))
-player_rect = guts_anim_right[0].get_rect(topleft=(guts_x, guts_y))
+orig_rect = guts_anim_right[0].get_rect(topleft=(guts_x, guts_y))
+player_rect = orig_rect.inflate(-50,-40)
 
 label = pygame.font.Font('fonts/Cinzel-Bold.ttf', 48)
 start_label = label.render("PLAY" ,False, (150, 35, 45))
@@ -83,6 +88,10 @@ runing = True
 while runing:
     keys = pygame.key.get_pressed()
     for event in pygame.event.get():
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+           if gameplay == 'game' and not is_atak:
+              is_atak = True
+              atak_start = pygame.time.get_ticks()
         if event.type == pygame.QUIT:
             runing = False 
         if event.type == appostol_timer and gameplay == 'game':
@@ -162,7 +171,9 @@ while runing:
             appostol for appostol in all_appostols_in_game
             if appostol["rect"].x > -179
          ]
-     
+     if is_atak == True:
+        if current_time - atak_start >=atak_duration:
+           is_atak = False
      if (keys[pygame.K_RIGHT ] or keys[pygame.K_d]) and guts_x < 750:
         guts_x+=player_speed
         if current_time - last_update2 >= animation_dielay:
@@ -191,11 +202,22 @@ while runing:
           jump_velocity = 0
      if is_jump:
         screen.blit(jump_img,(guts_x,guts_y))
+     elif is_atak:
+        screen.blit(atak_img,(guts_x,guts_y))
      else:
       screen.blit(current_sprite, (guts_x, guts_y))
      player_rect.topleft = (guts_x, guts_y)
      for apostol in all_appostols_in_game:
-      if player_rect.colliderect(apostol["rect"]):
+      appostol_hitbox = apostol["rect"].inflate(-40,-30)
+      appostol_hitbox.center = apostol["rect"].center
+
+      if is_atak:
+         attack_rect = pygame.Rect(guts_x + 90, guts_y + 35, 100, 100)
+         if attack_rect.colliderect(apostol["rect"]):
+          all_appostols_in_game.remove(appostol)
+          continue
+         
+      if player_rect.colliderect(appostol_hitbox):
         gameplay = "game over"
         pygame.mixer.music.stop()
         break
